@@ -439,10 +439,12 @@ class Parser
 					character = Utf8.charCodeAt(input, ++position);
 				}
 
+				/*
 				if (lineIndent < checkIndent)
 				{
 					throwWarning('deficient indentation');
 				}
+                                */
 			} 
 			else 
 			{
