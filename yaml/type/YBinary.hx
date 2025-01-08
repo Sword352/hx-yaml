@@ -1,7 +1,6 @@
 package yaml.type;
 
 import haxe.io.Bytes;
-import haxe.Utf8;
 import yaml.YamlType;
 
 class YBinary extends yaml.StringYamlType<Bytes>
@@ -27,18 +26,16 @@ class YBinary extends yaml.StringYamlType<Bytes>
 		super('tag:yaml.org,2002:binary', {kind:"string"}, {kind:"binary", instanceOf:Bytes});
 	}
 
-	override public function resolve(object:String, ?usingMaps:Bool = true, ?explicit:Bool):Bytes
+	override public function resolve(object:UnicodeString, ?usingMaps:Bool = true, ?explicit:Bool):Bytes
 	{
-		var length = Utf8.length(object);
-		var idx = 0;
 		var result = [];
 		var leftbits = 0; // number of bits decoded, but yet to be appended
 		var leftdata = 0; // bits decoded, but yet to be appended
 
 		// Convert one by one.
-		for (idx in 0...length) 
+		for (idx in 0...object.length) 
 		{
-			var code = Utf8.charCodeAt(object, idx);
+			var code = object.charCodeAt(idx);
 			var value = BASE64_BINTABLE[code & 0x7F];
 
 			// Skip LF(NL) || CR
@@ -77,9 +74,10 @@ class YBinary extends yaml.StringYamlType<Bytes>
 		return bytes;
 	}
 
-	override public function represent(object:Bytes, ?style:String):String
+	override public function represent(object:Bytes, ?style:String):UnicodeString
 	{
-		var result = '';
+		var result:UnicodeString = '';
+
 		var index = 0;
 		var max = object.length - 2;
 

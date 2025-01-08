@@ -3,7 +3,6 @@ package yaml;
 import Type;
 import yaml.util.StringMap;
 import yaml.util.IntMap;
-import haxe.Utf8;
 import haxe.io.Bytes;
 import yaml.YamlType;
 import yaml.schema.DefaultSchema;
@@ -125,12 +124,8 @@ class Renderer
 		return false;
 	}
 
-	function writeScalar(object:String)
-	{
-		#if sys
-		object = Utf8.encode(object);
-		#end
-		
+	function writeScalar(object:UnicodeString)
+	{		
 		var isQuoted = false;
 		var checkpoint = 0;
 		var position = -1;
@@ -138,16 +133,15 @@ class Renderer
 		result = '';
 
 		if (0 == object.length || 
-			CHAR_SPACE == Utf8.charCodeAt(object, 0) || 
-			CHAR_SPACE == Utf8.charCodeAt(object, Utf8.length(object) - 1)) 
+			CHAR_SPACE == object.charCodeAt(0) || 
+			CHAR_SPACE == object.charCodeAt(object.length - 1)) 
 		{
 			isQuoted = true;
 		}
 
-		var length = Utf8.length(object);
-		while (++position < length)
+		while (++position < object.length)
 		{
-			var character = Utf8.charCodeAt(object, position);
+			var character = object.charCodeAt(position);
 			if (!isQuoted) 
 			{
 				if (CHAR_TAB == character ||
@@ -184,7 +178,7 @@ class Renderer
 				(0x0E000 <= character && character <= 0x00FFFD) ||
 				(0x10000 <= character && character <= 0x10FFFF)))
 			{
-				result += yaml.util.Utf8.substring(object, checkpoint, position);
+				result += object.substring(checkpoint, position);
 				
 				if (ESCAPE_SEQUENCES.exists(character))
 				{
@@ -202,7 +196,7 @@ class Renderer
 
 		if (checkpoint < position)
 		{
-			result += yaml.util.Utf8.substring(object, checkpoint, position);
+			result += object.substring(checkpoint, position);
 		}
 
 		if (!isQuoted && testImplicitResolving(result))
@@ -214,10 +208,6 @@ class Renderer
 		{
 			result = '"' + result + '"';
 		}
-		
-		#if sys
-		result = Utf8.decode(result);
-		#end
 	}
 
 	function writeFlowSequence(level:Int, object:Array<Dynamic>) 
@@ -269,7 +259,6 @@ class Renderer
 		var _result = '';
 		var _tag = tag;
 		var index = 0;
-		var objectKey;
 
 		for (objectKey in Reflect.fields(object))
 		{
@@ -301,7 +290,6 @@ class Renderer
 		var _result = '';
 		var _tag = tag;
 		var index = 0;
-		var objectKey;
 		var keys:Iterator<Dynamic> = object.keys();
 		
 		for (objectKey in keys)
@@ -509,8 +497,6 @@ class Renderer
 
 	public function kindOf(object:Dynamic)
 	{
-		var kind = Type.typeof(object);
-
 		return switch (Type.typeof(object))
 		{
 			case TNull: "null";

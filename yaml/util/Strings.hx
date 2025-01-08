@@ -30,11 +30,13 @@ class Strings
 	/**
 	Concatenate a source string with itself N number of times.
 	*/
-	public static function repeat(source:String, times:Int):String
+	public static function repeat(source:UnicodeString, times:Int):UnicodeString
 	{
-		var result = "";
+		var result:UnicodeString = "";
+
 		for (i in 0...times)
 			result += source;
+		
 		return result;
 	}
 }
