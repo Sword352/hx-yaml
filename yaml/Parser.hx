@@ -317,7 +317,7 @@ class Parser
 	// when creating map based graph
 	function mergeMappings(destination:AnyObjectMap, source:AnyObjectMap)
 	{
-		if (!Std.is(source, AnyObjectMap)) {
+		if (!Std.isOfType(source, AnyObjectMap)) {
 			throwError('cannot merge mappings; the provided source object is unacceptable');
 		}
 	
@@ -334,7 +334,7 @@ class Parser
 
 		if ('tag:yaml.org,2002:merge' == keyTag)
 		{
-			if (Std.is(valueNode, Array))
+			if (Std.isOfType(valueNode, Array))
 			{
 				var list:Array<Dynamic> = cast valueNode;
 				for (member in list)
@@ -361,7 +361,7 @@ class Parser
 
 		if ('tag:yaml.org,2002:merge' == keyTag)
 		{
-			if (Std.is(valueNode, Array)) 
+			if (Std.isOfType(valueNode, Array)) 
 			{
 				var list:Array<AnyObjectMap> = cast valueNode;
 				for (member in list)
@@ -444,7 +444,7 @@ class Parser
 				{
 					throwWarning('deficient indentation');
 				}
-                                */
+                */
 			} 
 			else 
 			{
@@ -971,7 +971,7 @@ class Parser
 						{
 							_result = type.resolve(result, usingMaps, false);
 							#if (sys && !hl)
-							if (Std.is(_result, String))
+							if (Std.isOfType(_result, String))
 								_result = Utf8.decode(_result);
 							#end
 							tag = type.tag;
@@ -1000,7 +1000,7 @@ class Parser
 					{
 						_result = t.resolve(result, usingMaps, true);
 						#if (sys && !hl)
-						if (Std.is(_result, String))
+						if (Std.isOfType(_result, String))
 							_result = Utf8.decode(_result);
 						#end
 						
